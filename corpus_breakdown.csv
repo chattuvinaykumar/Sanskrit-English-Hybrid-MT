@@ -1,0 +1,5 @@
+category,total_pairs,train_split_80,val_split_10,test_split_10,percentage,description
+Religious & Philosophical Prose,800,640,80,80,40%,Upanishadic verses, Bhagavad Gita, and epic excerpts
+Classical Literature (Kavya & Prose),700,560,70,70,35%,Panchatantra, Hitopadesha, narrative excerpts
+Contemporary & Pedagogical,500,400,50,50,25%,Short instructional sentences, everyday usage, and didactic primers
+Total,2000,1600,200,200,100%,Curated parallel dataset

@@ -1,0 +1,13 @@
+id,category,sanskrit_sentence,english_translation,kartri_agent,karma_patient,karana_instrument,adhikarana_location,other_karaka_notes
+1,Religious / Philosophical,ईशा वास्यमिदं सर्वम्,All this is enveloped by the Lord,ईश (Lord - Kartri),इदं सर्वम् (All this - Karma),--,वास्यम् (enveloping),Upanishadic excerpt
+2,Religious / Philosophical,सत्यमेव जयते नानृतम्,Truth alone triumphs not falsehood,सत्यम् (Truth - Kartri),--,--,--,Mundaka Upanishad
+3,Religious / Philosophical,कर्मण्येवाधिकारस्ते मा फलेषु कदाचन,Your right is to work only never to its fruits,ते (Your/You - Kartri),कर्म (Duty/Action - Adhikarana/Scope),--,फलेषु (in fruits),Bhagavad Gita 2.47
+4,Religious / Philosophical,धर्मो रक्षति रक्षितः,Dharma protects those who protect it,धर्मः (Dharma - Kartri),रक्षितः (The one who protects - Karma),--,--,Mahabharata / Manusmriti
+5,Classical Kavya / Literature,रामः बाणेन रावणं हन्ति,Rama kills Ravana with an arrow,रामः (Rama - Kartri),रावणम् (Ravana - Karma),बाणेन (by arrow - Karana),--,Epic/Narrative exemplar
+6,Classical Kavya / Literature,विद्या ददाति विनयं विनयाद्याति पात्रताम्,Knowledge bestows humility and from humility comes worthiness,विद्या (Knowledge - Kartri),विनयम् (Humility - Karma),विनयात् (from humility - Apadana),--,Hitopadesha
+7,Classical Kavya / Literature,अस्ति उत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिराजः,In the northern direction stands the divine sovereign of mountains named Himalaya,हिमालयः (Himalaya - Kartri),--,दिशि (in northern direction - Adhikarana),--,Kalidasa Kumarasambhava 1.1
+8,Classical Kavya / Literature,लोभात् क्रोधः प्रभवति लोभात् कामः प्रजायते,From greed arises anger and from greed springs desire,क्रोधः / कामः (Kartri),--,लोभात् (from greed - Apadana),--,Hitopadesha
+9,Contemporary / Pedagogical,छात्रः विद्यालये शिक्षकेन सह संस्कृतं पठति,The student studies Sanskrit with the teacher in the school,छात्रः (Student - Kartri),संस्कृतम् (Sanskrit - Karma),शिक्षकेन सह (with teacher - Sahartha Karana),विद्यालये (in school - Adhikarana),Pedagogical sentence
+10,Contemporary / Pedagogical,बालकः उद्याने कन्दुकेन क्रीडति,The boy plays with a ball in the garden,बालकः (Boy - Kartri),--,कन्दुकेन (with a ball - Karana),उद्याने (in the garden - Adhikarana),Pedagogical sentence
+11,Contemporary / Pedagogical,माता पाकशालायां भोजनं पचति,The mother cooks food in the kitchen,माता (Mother - Kartri),भोजनम् (Food - Karma),--,पाकशालायां (in kitchen - Adhikarana),Everyday contemporary prose
+12,Contemporary / Pedagogical,वयं प्रतिदिनं पुस्तकालयं गच्छामः,We go to the library every day,वयम् (We - Kartri),पुस्तकालयम् (Library - Karma/Goal),--,प्रतिदिनम् (every day - Kala Adhikarana),Everyday pedagogical prose

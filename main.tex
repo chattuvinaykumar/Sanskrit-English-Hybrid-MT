@@ -1,0 +1,128 @@
+\documentclass[11pt]{article}
+\usepackage{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{hyperref}
+
+\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{3pt}
+
+\title{A Hybrid Rule-Based and Neural Approach for Sanskrit--English Machine Translation Using Karaka Semantic Role Labeling}
+
+\author{Chattu Vinaykumar \quad Veeraiah Thalagondapati \\
+  Department of Computer Science and Engineering \\
+  Ecole Centrale School of Engineering, Mahindra University \\
+  Hyderabad 500043, Telangana, India \\
+  \texttt{\{se25maid052, veeraiah.talagondapati\}@mahindrauniversity.edu.in} \\
+}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Sanskrit is a morphologically rich, low-resource language for which purely data-driven neural machine translation (NMT) is difficult to apply effectively, given the scarcity of parallel corpora. This paper presents a hybrid Sanskrit--English translation system that integrates rule-based morphological and Karaka (semantic role) analysis, grounded in Paninian grammar, with a sequence-to-sequence neural translation module. Linguistic features extracted from Sanskrit input---root (\textit{dh\=atu}), suffixes (\textit{pratyaya}), case markers (\textit{vibhakti}), and Karaka roles---are supplied explicitly to the encoder alongside learned word embeddings, allowing the neural component to focus its limited training capacity on lexical and contextual mapping rather than on re-deriving Sanskrit morphology from data. A post-hoc explainability validation layer checks whether the generated translation preserves the Karaka role structure of the source sentence and reports discrepancies rather than discarding non-conforming outputs. On a curated corpus of 2,000 Sanskrit--English sentence pairs (1,600 train / 200 validation / 200 test), the full hybrid system improves BLEU from 22.4 (Transformer baseline) to 25.8---a 15\% relative gain---and raises mean human-evaluated quality from 3.2/5.0 to 4.1/5.0 (Fleiss' $\kappa = 0.73$). Ablation results show that morphological features account for most of the BLEU improvement, while Karaka role information and the validation layer contribute disproportionately to human-judged semantic accuracy rather than to automatic metrics. We discuss why this corpus-scale evaluation does not yet include comparison against strong pretrained multilingual baselines such as IndicTrans2 and NLLB, and we outline that comparison, along with corpus expansion, as the immediate next step for this line of work.
+\end{abstract}
+
+\section{Introduction}
+Machine translation between well-resourced language pairs has advanced substantially through neural sequence-to-sequence models and transformer-based architectures. Translation involving ancient, morphologically complex, low-resource languages remains considerably harder. Sanskrit---one of the oldest documented languages and the classical vehicle for an extensive corpus of philosophical, literary, and scientific texts---is a representative case: it possesses eight grammatical cases, a productive compounding system, and intricate verbal morphology, while digitized Sanskrit--English parallel text remains scarce.
+
+Rule-based machine translation encodes linguistic knowledge explicitly, providing interpretability under extreme data scarcity, yet tends to falter on idiomatic variation. Conversely, neural machine translation effectively models contextual nuances but demands substantial corpora. Because these two paradigms offer complementary strengths, we propose a hybrid architecture combining Paninian-grammar-based linguistic analysis---specifically Karaka semantic role labeling---with a neural sequence-to-sequence module to make effective use of limited parallel data while ensuring interpretable validation.
+
+The primary contributions of this work are:
+\begin{enumerate}
+    \item A hybrid architecture supplying Karaka-based semantic roles and morphological tags as explicit encoder inputs for Sanskrit--English translation.
+    \item An explainability validation layer checking target English translations against source Karaka role structures and generating descriptive explanations for detected discrepancies.
+    \item An empirical evaluation on a 2,000-sentence Sanskrit--English corpus demonstrating a 15\% relative BLEU gain over a Transformer baseline trained from scratch on identical data.
+    \item An ablation study disentangling the individual contributions of morphology, Karaka role labeling, and post-hoc validation across automatic and human metrics.
+    \item A thorough analysis of experimental limitations, outlining future benchmarks against pretrained multilingual models such as IndicTrans2 \cite{gala2023indictrans2} and NLLB \cite{nllb2022}.
+\end{enumerate}
+
+\section{Related Work}
+\textbf{Neural Machine Translation:} Sequence-to-sequence attention models \cite{bahdanau2015neural,sutskever2014sequence} and the Transformer architecture \cite{vaswani2017attention} have defined modern machine translation, but their efficacy relies primarily on large parallel corpora \cite{wu2016google,wolf2020transformers}.
+
+\textbf{Low-Resource and Indic MT:} Techniques addressing data scarcity include back-translation \cite{sennrich2016improving}, multilingual transfer \cite{johnson2017google}, and recent large-scale multilingual foundations like NLLB \cite{nllb2022} and IndicTrans2 \cite{gala2023indictrans2}. However, these models rarely incorporate formal classical grammatical structures directly into the translation process.
+
+\textbf{Computational Sanskrit Linguistics:} Prior computational initiatives have addressed morphological analysis and disambiguation \cite{hellwig2015morphological}. Recent work has trained unified byte-level models on Sanskrit \cite{nehrdich2024one}. Despite its conceptual equivalence to semantic role labeling, the Paninian Karaka framework remains largely unexploited in contemporary neural pipelines.
+
+\textbf{Explainability in MT:} Interpretability approaches predominantly focus on attention visualizations \cite{luong2015effective}. We advance beyond post-hoc visualizations by embedding a rule-grounded validation step directly into the pipeline.
+
+\section{Methodology}
+The pipeline operates across three stages: (i) linguistic feature extraction and Karaka role assignment; (ii) neural sequence-to-sequence translation; and (iii) post-hoc explainability validation.
+
+\subsection{Feature Extraction and Karaka Labeling}
+Input Sanskrit tokens are parsed by a rule-based engine encoding Paninian principles, extracting root (\textit{dh\=atu}), affixes (\textit{pratyaya}), case endings (\textit{vibhakti}), gender, number, and tense. Concurrently, syntactic dependency analysis assigns Karaka semantic roles: \textit{Kart\d{r}} (Agent), \textit{Karma} (Patient), \textit{Kara\d{n}a} (Instrument), \textit{Samprad\=ana} (Recipient), \textit{Ap\=ad\=ana} (Source), \textit{Adhikara\d{n}a} (Location), and \textit{Sambandha} (Relation). These categorical features are concatenated with subword embeddings and projected to form encoder inputs.
+
+\subsection{Neural Sequence-to-Sequence Module}
+A standard multi-head attention Transformer encoder-decoder processes concatenated linguistic and token representations. Supplying explicit morphological and Karaka features alleviates the network from deducing complex grammar from limited samples, allowing parameter capacity to specialize in cross-lingual lexical selection.
+
+\subsection{Explainability Validation Layer}
+Target English hypotheses are parsed to verify predicate-argument consistency with source Karaka roles. Rather than discarding sentences exhibiting divergences, the validator emits soft diagnostic flags (e.g., noting structural voice alternations or argument omissions) to facilitate human evaluation.
+
+\subsection{End-to-End Worked Example}
+Table~\ref{tab:worked_example} illustrates pipeline execution on the exemplar sentence \textit{R\=ama\d{h} b\=a\d{n}ena R\=ava\d{n}a\d{m} hanti} (``Rama kills Ravana with an arrow'').
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lllll}
+\toprule
+\textbf{Token} & \textbf{Root} & \textbf{Morphology} & \textbf{Karaka} & \textbf{Realization} \\
+\midrule
+\textit{R\=ama\d{h}} & \textit{R\=ama} & Nom., sg. & Kart\d{r} (Agent) & Subject: Rama \\
+\textit{b\=a\d{n}ena} & \textit{b\=a\d{n}a} & Inst., sg. & Kara\d{n}a (Inst.) & Prep: with arrow \\
+\textit{R\=ava\d{n}a\d{m}} & \textit{R\=ava\d{n}a} & Acc., sg. & Karma (Patient) & Dir Obj: Ravana \\
+\textit{hanti} & $\sqrt{han}$ & Pres., 3sg. act. & (Predicate) & Verb: kills \\
+\bottomrule
+\end{tabular}
+\caption{Worked example of feature extraction and expected realization for the target output ``Rama kills Ravana with an arrow.''}
+\label{tab:worked_example}
+\end{table}
+
+\section{Experiments and Results}
+
+\subsection{Dataset and Experimental Setup}
+We utilized a curated corpus of 2,000 Sanskrit--English sentence pairs comprising 800 pairs (40\%) of classical religious and philosophical prose, 700 pairs (35\%) of classical literature (\textit{k\=avya} and narrative prose), and 500 pairs (25\%) of contemporary pedagogical sentences. Data was segmented at \textit{da\d{n}\d{d}a} delimiters and split into training (1,600), validation (200), and test (200) partitions.
+
+The baseline is a constrained 6-layer Transformer trained from scratch on the identical 1,600 training pairs. Models were implemented in PyTorch and trained with label smoothing. Code is available at \url{https://github.com/chattuvinaykumar/Sanskrit-English-Hybrid-MT}.
+
+\subsection{Evaluation Metrics and Results}
+We report BLEU \cite{papineni2002bleu} and METEOR. Three independent bilingual annotators rated translations on a 1--5 Likert scale for semantic fidelity and naturalness (Fleiss' $\kappa = 0.73$).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{System Configuration} & \textbf{BLEU} & \textbf{MET.} & \textbf{Human} \\
+\midrule
+Baseline (Transformer only) & 22.4 & 0.28 & 3.2 \\
++ Morphological features & 25.8 & 0.31 & 3.7 \\
++ Karaka semantic roles & \textbf{25.9} & 0.32 & 3.9 \\
+\textbf{Full Hybrid (+ Validation)} & 25.8 & \textbf{0.33} & \textbf{4.1} \\
+\bottomrule
+\end{tabular}
+\caption{Test set performance ($n = 200$). Human = mean quality rating (1--5 scale).}
+\label{tab:results}
+\end{table}
+
+As shown in Table~\ref{tab:results}, morphological features provide the primary surface gain (+3.4 BLEU), while Karaka semantic roles and explainability validation substantially elevate human semantic adequacy (3.2 to 4.1).
+
+\section{Conclusion and Future Work}
+We introduced a hybrid Paninian-neural Sanskrit--English machine translation architecture combining explicit Karaka semantic role labeling with post-hoc explainability validation. Future directions include benchmarking fine-tuned IndicTrans2 \cite{gala2023indictrans2} and NLLB \cite{nllb2022} backbones and scaling the parallel corpus.
+
+\section*{Limitations}
+\textbf{Scale:} The evaluation is constrained to 2,000 curated pairs. \textbf{Baselines:} Comparison was conducted against a controlled from-scratch Transformer to isolate feature effects; pretrained models (IndicTrans2, NLLB) lack Paninian explainability mechanisms. \textbf{Idiomatic Language:} Rule-grounded Karaka mappings face challenges with non-compositional idioms.
+
+\bibliographystyle{acl_natbib}
+\bibliography{custom}
+
+\end{document}
